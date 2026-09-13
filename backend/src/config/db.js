@@ -5,17 +5,22 @@ let mongod = null;
 
 const connectDB = async () => {
   try {
-    const connUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/roommatehub';
+    const connUri = 
+      process.env.MONGODB_URI || 
+      process.env.MONGO_URI || 
+      process.env.MONGO_URL || 
+      process.env.DATABASE_URL || 
+      'mongodb://127.0.0.1:27017/roommatehub';
     
-    // Attempt standard connection with 3-second timeout
+    // Attempt standard connection with 5-second timeout
     await mongoose.connect(connUri, {
-      serverSelectionTimeoutMS: 3000,
+      serverSelectionTimeoutMS: 5000,
     });
     console.log(`[MongoDB] Connected successfully to: ${mongoose.connection.host}`);
     // Auto-seed default accounts & properties if database is empty
     await seedDatabase(false);
   } catch (err) {
-    console.warn(`[MongoDB] Standard connection to ${process.env.MONGODB_URI} failed: ${err.message}`);
+    console.warn(`[MongoDB] Standard connection to URI failed: ${err.message}`);
     console.log(`[MongoDB] Starting fallback in-memory MongoDB server for seamless development/demo...`);
     
     try {

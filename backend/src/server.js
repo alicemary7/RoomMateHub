@@ -53,7 +53,26 @@ if (process.env.NODE_ENV === 'development') {
 // Serve fallback uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
-// Health check endpoint
+// Root & Health check endpoints
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    name: 'RoomMateHub API',
+    status: 'online',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      properties: '/api/properties',
+      favorites: '/api/favorites',
+      inquiries: '/api/inquiries',
+      visits: '/api/visits',
+      reviews: '/api/reviews',
+      admin: '/api/admin'
+    }
+  });
+});
+
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
@@ -475,7 +494,7 @@ app.use('/api/admin', adminRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`=============================================`);
   console.log(`🚀 RoomMateHub Backend running on port ${PORT}`);
   console.log(`🌐 Health check: http://localhost:${PORT}/api/health`);
